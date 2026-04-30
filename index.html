@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio BTS SIO - Innovation Digitale</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        :root {
+            --primary: #00f0ff;
+            --secondary: #ff00ff;
+            --accent: #00ff88;
+            --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark);
+            color: white;
+            overflow-x: hidden;
+            
+        }
+
+        .cursor, .cursor-follower { display: none; }
+
+        /* Canvas Background */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.7);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.3rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .logo-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .logo-title {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            position: relative;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 0 5%;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 900;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #00f0ff, #ff00ff, #00ff88);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 300;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 50px rgba(0, 240, 255, 0.8);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 240, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        /* Floating Cards */
+        .floating-cards {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .card-3d {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border-radius: 20px;
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 8px 32px rgba(0, 240, 255, 0.2);
+            z-index: 0;
+        }
+
+        .card-3d:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+        .card-3d:nth-child(2) { top: 60%; right: 10%; animation-delay: 1s; }
+        .card-3d:nth-child(3) { bottom: 15%; left: 15%; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        /* About Section */
+        .about {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 5rem 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: start;
+        }
+
+        .about-content h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .skill-tag {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 240, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .about-visual {
+            position: relative;
+            height: 500px;
+        }
+
+        .visual-box {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            
+        }
+
+        .visual-box:nth-child(1) { width: 300px; height: 300px; top: 100px; left: -50px; animation-delay: 0s; }
+        .visual-box:nth-child(2) { width: 200px; height: 200px; bottom: -30px; right: 50px; animation-delay: 1s; }
+
+        @keyframes floatRotate {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* ═══════════════════════════════════════════
+           E5 SECTION
+        ═══════════════════════════════════════════ */
+        .e5-section {
+            padding: 8rem 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .e5-section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .e5-section-header {
+            margin-bottom: 4rem;
+        }
+
+        .e5-eyebrow {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            margin-bottom: 0.8rem;
+        }
+
+        .e5-section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .e5-section-desc {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.45);
+            max-width: 560px;
+            line-height: 1.7;
+        }
+
+        /* Grille des sujets */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        /* ── Carte sujet ── */
+        .subject-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(0,240,255,0.15);
+            border-radius: 22px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .subject-card::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(0,240,255,0.06), rgba(0,255,136,0.03));
+            opacity: 0;
+            transition: opacity 0.4s;
+            border-radius: 22px;
+            pointer-events: none;
+        }
+
+        .subject-card:hover {
+            border-color: rgba(0,240,255,0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 24px 60px rgba(0,240,255,0.15);
+        }
+
+        .subject-card:hover::before { opacity: 1; }
+
+        /* Badge */
+        .card-badge {
+            position: absolute;
+            top: 1.1rem; right: 1.1rem;
+            padding: 0.28rem 0.85rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 20px;
+            font-size: 0.7rem; font-weight: 800;
+            color: #0a0a0f;
+            letter-spacing: 1px; text-transform: uppercase;
+            box-shadow: 0 4px 14px rgba(0,240,255,0.45);
+            z-index: 3;
+        }
+
+        /* Miniature PDF */
+        .card-preview {
+            width: 100%; height: 190px;
+            background: linear-gradient(160deg, #0d1b2e 0%, #080814 100%);
+            border-bottom: 1px solid rgba(0,240,255,0.08);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+        .card-preview-inner {
+            width: 82%; height: 80%;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.6);
+            overflow: hidden;
+            transition: transform 0.4s ease;
+            position: relative;
+        }
+
+        .subject-card:hover .card-preview-inner {
+            transform: scale(1.05) rotate(-1.5deg);
+        }
+
+        .pdf-mini {
+            width: 100%; height: 100%;
+            padding: 9px 11px;
+            background: white;
+            position: relative;
+        }
+
+        .pdf-mini-header {
+            height: 20px;
+            background: linear-gradient(90deg, #1A3A5C, #2563A8);
+            border-radius: 3px; margin-bottom: 7px;
+        }
+
+        .pdf-mini-line {
+            height: 3.5px; background: #EAF1FB;
+            border-radius: 2px; margin-bottom: 3.5px;
+        }
+        .pdf-mini-line.short { width: 55%; }
+        .pdf-mini-line.med   { width: 78%; }
+        .pdf-mini-line.full  { width: 100%; }
+
+        .pdf-mini-row {
+            display: flex; gap: 4px; margin: 5px 0;
+        }
+        .pdf-mini-box {
+            flex: 1; height: 16px;
+            background: linear-gradient(135deg, #EAF1FB, #c8dcf0);
+            border-radius: 3px;
+        }
+
+        .pdf-mini-table { margin-top: 5px; }
+        .pdf-mini-tr { display: flex; gap: 2px; margin-bottom: 2px; }
+        .pdf-mini-td { flex: 1; height: 5px; border-radius: 1px; }
+        .pdf-mini-td.h  { background: #1A3A5C; }
+        .pdf-mini-td.a  { background: #EAF1FB; }
+        .pdf-mini-td.w  { background: #f2f2f2; }
+
+        .pdf-mini-icon {
+            position: absolute; top: 7px; right: 7px;
+            width: 18px; height: 22px;
+            background: #e74c3c; border-radius: 2px;
+            font-size: 4.5px; color: white; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            letter-spacing: 0.3px;
+        }
+
+        .preview-fade {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(8,8,20,0.65) 0%, transparent 55%);
+        }
+
+        /* Corps */
+        .card-body {
+            padding: 1.4rem 1.5rem 1.5rem;
+            position: relative; z-index: 2;
+        }
+
+        .card-eyebrow {
+            font-size: 0.68rem; font-weight: 700;
+            color: var(--primary); letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 0.45rem;
+        }
+        .card-eyebrow::before {
+            content: '';
+            width: 18px; height: 1.5px;
+            background: var(--primary);
+            display: inline-block;
+        }
+
+        .card-title {
+            font-size: 1.05rem; font-weight: 700;
+            color: white; line-height: 1.4;
+            margin-bottom: 0.45rem;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.6;
+            margin-bottom: 1.1rem;
+        }
+
+        .card-tags {
+            display: flex; flex-wrap: wrap; gap: 0.45rem;
+            margin-bottom: 1.2rem;
+        }
+        .card-tag {
+            padding: 0.25rem 0.65rem;
+            background: rgba(0,240,255,0.07);
+            border: 1px solid rgba(0,240,255,0.18);
+            border-radius: 10px;
+            font-size: 0.7rem; color: rgba(0,240,255,0.8);
+        }
+
+        .card-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card-meta {
+            font-size: 0.75rem; color: rgba(255,255,255,0.28);
+            display: flex; align-items: center; gap: 0.35rem;
+        }
+
+        .card-open-btn {
+            padding: 0.5rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none; border-radius: 18px;
+            font-size: 0.78rem; font-weight: 700;
+            color: #0a0a0f; cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .card-open-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(0,240,255,0.45);
+        }
+
+        /* Placeholder */
+        .subject-card.coming {
+            opacity: 0.35;
+            pointer-events: none;
+            border-style: dashed;
+        }
+        .coming-body {
+            padding: 3.5rem 1.5rem;
+            text-align: center;
+        }
+        .coming-icon { font-size: 2rem; opacity: 0.3; margin-bottom: 1rem; }
+        .coming-label {
+            font-size: 0.7rem; letter-spacing: 2px;
+            color: rgba(255,255,255,0.25); text-transform: uppercase;
+        }
+
+        /* ═══════════════════════════════════════════
+           MODAL PDF
+        ═══════════════════════════════════════════ */
+        .pdf-modal {
+            display: none;
+            position: fixed; inset: 0;
+            z-index: 9000;
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(12px);
+            align-items: center; justify-content: center;
+            padding: 2rem;
+        }
+        .pdf-modal.open { display: flex; }
+
+        .pdf-modal-box {
+            background: #0c1420;
+            border: 1px solid rgba(0,240,255,0.2);
+            border-radius: 18px;
+            width: 100%; max-width: 920px;
+            height: 90vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.85);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0); }
+        }
+
+        .pdf-modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0,240,255,0.1);
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,240,255,0.03);
+            flex-shrink: 0;
+        }
+
+        .pdf-modal-title {
+            font-size: 0.88rem; font-weight: 600;
+            color: var(--primary); letter-spacing: 0.5px;
+        }
+
+        .pdf-modal-close {
+            width: 32px; height: 32px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            cursor: pointer; color: white;
+            font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .pdf-modal-close:hover { background: rgba(255,60,60,0.35); border-color: rgba(255,60,60,0.4); }
+
+        .pdf-modal-frame {
+            flex: 1; width: 100%; border: none;
+            background: #fff;
+        }
+
+        /* Other sections */
+        .projects-placeholder {
+            padding: 5rem 5%;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .projects-placeholder h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .projects-placeholder p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--primary), transparent);
+            margin: 0 auto;
+            animation: scrollDown 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollDown {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(20px); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            .cursor, .cursor-follower { display: none; }
+            .nav-links { gap: 1.5rem; }
+            .about-container { grid-template-columns: 1fr; gap: 3rem; }
+            .about-visual { height: 300px; }
+            .cta-buttons { flex-direction: column; align-items: center; }
+            .btn { width: 100%; max-width: 300px; }
+            .subjects-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ═══════════════════════════════════════════
+           ARTICLES DE VEILLE HEBDOMADAIRES
+        ═══════════════════════════════════════════ */
+        .veille-articles-header {
+            margin-top: 4rem;
+        }
+        .veille-articles-title {
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        .veille-articles-desc {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.45);
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* Expand article */
+        .article-expand {
+            display: none;
+            border-top: 1px solid rgba(0,255,136,0.2);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        .article-expand.open { display: block; }
+
+        /* Prose markdown dans les articles */
+        .article-prose h1 { color: white; font-size: 1rem; font-weight: 700; margin: 0.8rem 0 0.4rem; }
+        .article-prose h2 { color: white; font-size: 0.92rem; font-weight: 700; margin: 0.8rem 0 0.4rem; }
+        .article-prose h3 { color: white; font-size: 0.88rem; font-weight: 600; margin: 0.6rem 0 0.3rem; }
+        .article-prose p  { color: rgba(255,255,255,0.65); font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.6rem; }
+        .article-prose strong { color: white; font-weight: 700; }
+        .article-prose em { color: rgba(255,255,255,0.75); font-style: italic; }
+        .article-prose ul, .article-prose ol { color: rgba(255,255,255,0.65); font-size: 0.82rem; padding-left: 1.2rem; margin-bottom: 0.6rem; }
+        .article-prose li { margin-bottom: 0.2rem; }
+        .article-prose code { background: rgba(0,240,255,0.1); padding: 0.1rem 0.35rem; border-radius: 4px; color: #00f0ff; font-size: 0.78rem; }
+        .article-prose a { color: var(--accent); text-decoration: underline; }
+        .article-prose blockquote { border-left: 2px solid var(--accent); padding-left: 0.8rem; color: rgba(255,255,255,0.45); font-style: italic; margin: 0.6rem 0; }
+        .article-prose hr { border: none; border-top: 1px solid rgba(0,240,255,0.15); margin: 0.8rem 0; }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">RZ</div>
+            <div class="logo-text">
+                <span class="logo-name">Rabia Zerouali</span>
+                <span class="logo-title">BTS SIO SISR</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#accueil">Accueil</a></li>
+            <li><a href="#about">À propos</a></li>
+            <li><a href="#e5">E5</a></li>
+            <li><a href="#e6">E6</a></li>
+            <li><a href="#veille">Veille</a></li>
+            <li><a href="#certification">Certification</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section id="accueil" class="hero">
+        <div class="floating-cards">
+            <div class="card-3d"></div>
+            <div class="card-3d"></div>
+            <div class="card-3d"></div>
+        </div>
+        <div class="hero-content">
+            <p class="hero-subtitle">BTS SIO - SISR</p>
+            <h1 class="hero-title">Technicienne<br>Réseau</h1>
+            <p style="font-size:clamp(1rem,2vw,1.4rem);font-weight:300;letter-spacing:4px;color:rgba(255,255,255,0.45);margin-top:-1rem;margin-bottom:2rem;text-transform:uppercase;">Rabia Zerouali</p>
+            <p class="hero-description">
+                Étudiante en BTS Services Informatiques aux Organisations, option Solutions d'Infrastructure, Systèmes et Réseaux.
+                Passionnée par l'administration système, les réseaux et la cybersécurité.
+            </p>
+        </div>
+        <div class="scroll-indicator"><span></span></div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="about">
+        <div class="about-container">
+            <div class="about-content">
+                <h2>À Propos</h2>
+                <p>Étudiante en BTS Services Informatiques aux Organisations, option SISR (Solutions d'Infrastructure, Systèmes et Réseaux) chez Aurlom, Paris.</p>
+                <p>Issue d'un parcours en lettres, je me réoriente vers l'informatique, animée par un fort intérêt pour les technologies numériques et la résolution de problèmes techniques.</p>
+                <p><strong>Alternance :</strong> Actuellement en alternance chez CFC Copies sur un rythme de 3 jours en entreprise et 2 jours à l'école.</p>
+                <p><strong>Spécialisation :</strong> Administration système, gestion de réseaux, sécurité informatique et support technique.</p>
+                <div class="skills">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Réseaux</span>
+                    <span class="skill-tag">Windows Server</span>
+                    <span class="skill-tag">Linux</span>
+                    <span class="skill-tag">Active Directory</span>
+                    <span class="skill-tag">Virtualisation</span>
+                    <span class="skill-tag">Pack Office</span>
+                    <span class="skill-tag">PIX (Score 93)</span>
+                </div>
+            </div>
+            <div class="about-visual">
+                <!-- CV Card -->
+                <div onclick="openPdf('CV_2026-03-14_Rabia_Zerouali.pdf', 'CV — Rabia Zerouali')" style="
+                    position: absolute; top: 60px; left: -20px; width: 290px;
+                    background: rgba(255,255,255,0.03);
+                    border: 1px solid rgba(0,240,255,0.2);
+                    border-radius: 18px; overflow: hidden; cursor: pointer;
+                    transition: all 0.4s ease; z-index: 2;
+                    
+                " onmouseover="this.style.transform='translateY(-8px) rotate(0deg)';this.style.borderColor='rgba(0,240,255,0.6)';this.style.boxShadow='0 20px 50px rgba(0,240,255,0.2)'"
+                   onmouseout="this.style.transform='';this.style.borderColor='rgba(0,240,255,0.2)';this.style.boxShadow='none'">
+
+                    <!-- Miniature CV -->
+                    <div style="width:100%;height:155px;background:linear-gradient(160deg,#0d1b2e,#080814);display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid rgba(0,240,255,0.08);">
+                        <div style="width:78%;height:82%;background:white;border-radius:5px;box-shadow:0 8px 30px rgba(0,0,0,0.6);overflow:hidden;padding:8px;position:relative;">
+                            <div style="display:flex;gap:5px;height:100%;">
+                                <div style="width:35%;background:#1a1a2e;border-radius:3px;padding:5px;">
+                                    <div style="width:22px;height:22px;background:linear-gradient(135deg,#00f0ff,#ff00ff);border-radius:50%;margin:0 auto 4px;"></div>
+                                    <div style="height:2.5px;width:100%;background:rgba(0,240,255,0.4);border-radius:1px;margin-bottom:3px;"></div>
+                                    <div style="height:2px;width:80%;background:rgba(255,255,255,0.15);border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:60%;background:rgba(255,255,255,0.1);border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="height:2.5px;width:100%;background:rgba(0,240,255,0.3);border-radius:1px;margin-bottom:3px;"></div>
+                                    <div style="height:2px;width:70%;background:rgba(255,255,255,0.1);border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:55%;background:rgba(255,255,255,0.1);border-radius:1px;"></div>
+                                </div>
+                                <div style="flex:1;padding:3px 0;">
+                                    <div style="height:4px;width:90%;background:#1a1a2e;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2.5px;width:70%;background:#ddd;border-radius:1px;margin-bottom:5px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:85%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:90%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="height:3px;width:60%;background:#1a1a2e;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:95%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:80%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:88%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="height:3px;width:55%;background:#1a1a2e;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:75%;background:#f0f0f0;border-radius:1px;"></div>
+                                </div>
+                            </div>
+                            <div style="position:absolute;top:6px;right:6px;width:16px;height:20px;background:#e74c3c;border-radius:2px;font-size:4px;color:white;font-weight:800;display:flex;align-items:center;justify-content:center;">PDF</div>
+                        </div>
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,20,0.5) 0%,transparent 60%);"></div>
+                    </div>
+
+                    <!-- Card body -->
+                    <div style="padding:1.1rem 1.3rem 1.3rem;">
+                        <div style="font-size:0.68rem;font-weight:700;color:var(--primary);letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                            <span style="width:16px;height:1.5px;background:var(--primary);display:inline-block;"></span>
+                            Curriculum Vitae
+                        </div>
+                        <div style="font-size:1rem;font-weight:700;color:white;margin-bottom:0.3rem;">Rabia Zerouali</div>
+                        <div style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.5;margin-bottom:1rem;">Technicienne Support · BTS SIO SISR<br>Alternance chez CFC Copies, Paris</div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.05);">
+                            <span style="font-size:0.72rem;color:rgba(255,255,255,0.25);display:flex;align-items:center;gap:0.3rem;">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                                1 page
+                            </span>
+                            <span style="padding:0.45rem 1.1rem;background:linear-gradient(135deg,var(--primary),var(--secondary));border-radius:16px;font-size:0.75rem;font-weight:700;color:#0a0a0f;">Voir le CV →</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating box derrière -->
+                <div class="visual-box" style="width:160px;height:160px;bottom:30px;right:10px;animation-delay:1s;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ E5 ═══════════════ -->
+    <section id="e5" class="e5-section">
+        <div class="e5-section-inner">
+            <div class="e5-section-header">
+                <p class="e5-eyebrow">Épreuve</p>
+                <h2 class="e5-section-title">E5 — Support &amp; Services</h2>
+                <p class="e5-section-desc">Support et mise à disposition de services informatiques — situations professionnelles documentées en entreprise.</p>
+            </div>
+
+            <div class="subjects-grid">
+
+                <!-- ── SUJET 1 ── -->
+                <div class="subject-card" onclick="openPdf('E5_Gestion_Parc_CFC_termine.pdf', 'Sujet 1 — Gestion du Parc Informatique &amp; Support Utilisateurs N1')">
+                    <div class="card-badge">Sujet&#160;1</div>
+                    <div class="card-preview">
+                        <div class="card-preview-inner">
+                            <div class="pdf-mini" style="background:#fff;">
+                                <div style="width:100%;height:100%;background:#fff;padding:7px;position:relative;">
+                                    <div style="height:2px;width:100%;background:#1a5fa8;border-radius:1px;margin-bottom:5px;"></div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:1px;">Gestion du Parc</div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:3px;">Informatique &amp; Support N1</div>
+                                    <div style="font-size:4px;color:#1a5fa8;font-weight:700;letter-spacing:0.5px;margin-bottom:5px;">E5 — Sujet 1 | BTS SIO SISR</div>
+                                    <div style="height:1px;background:#e0e0e0;margin-bottom:4px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:85%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:90%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="display:flex;gap:2px;margin-bottom:3px;">
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                    </div>
+                                    <div style="height:2px;width:95%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:80%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="position:absolute;bottom:6px;right:6px;width:16px;height:20px;background:#e74c3c;border-radius:2px;font-size:4px;color:white;font-weight:800;display:flex;align-items:center;justify-content:center;">PDF</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-fade"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-eyebrow">E5 · Sujet 1</div>
+                        <div class="card-title">Gestion du Parc Informatique<br>&amp; Support Utilisateurs N1</div>
+                        <div class="card-desc">Inventaire, tickets ITIL, outils ITSM et bonnes pratiques terrain en alternance chez CFC Copies. Contexte, processus opérationnels et mise en pratique.</div>
+                        <div class="card-tags">
+                            <span class="card-tag">GLPI</span>
+                            <span class="card-tag">ITIL</span>
+                            <span class="card-tag">OCS Inventory</span>
+                            <span class="card-tag">SCCM / Intune</span>
+                            <span class="card-tag">Active Directory</span>
+                            <span class="card-tag">Windows 10/11</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-meta">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                                11 pages
+                            </span>
+                            <button class="card-open-btn">Voir le document →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── SUJET 2 ── -->
+                <div class="subject-card" onclick="openPdf('Rapport_Windows_VM_termine.pdf', 'Sujet 2 — Installer Windows dans une VM avec VMware Workstation')">
+                    <div class="card-badge">Sujet&#160;2</div>
+                    <div class="card-preview">
+                        <div class="card-preview-inner">
+                            <div class="pdf-mini" style="background:#fff;">
+                                <div style="width:100%;height:100%;background:#fff;padding:7px;position:relative;">
+                                    <div style="height:2px;width:100%;background:#1a5fa8;border-radius:1px;margin-bottom:5px;"></div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:1px;">Installer Windows</div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:3px;">dans une VM — VMware</div>
+                                    <div style="font-size:4px;color:#1a5fa8;font-weight:700;letter-spacing:0.5px;margin-bottom:5px;">E5 — Sujet 2 | BTS SIO SISR</div>
+                                    <div style="height:1px;background:#e0e0e0;margin-bottom:4px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:80%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:90%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="display:flex;gap:2px;margin-bottom:3px;">
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                    </div>
+                                    <div style="height:2px;width:95%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:75%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="position:absolute;bottom:6px;right:6px;width:16px;height:20px;background:#e74c3c;border-radius:2px;font-size:4px;color:white;font-weight:800;display:flex;align-items:center;justify-content:center;">PDF</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-fade"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-eyebrow">E5 · Sujet 2</div>
+                        <div class="card-title">Installer Windows dans une VM<br><span style="color:var(--primary);">avec VMware Workstation</span></div>
+                        <div class="card-desc">Installation et configuration de Windows 10 dans une machine virtuelle VMware. Hyperviseurs, modes réseau, snapshots et cas d'usage BTS SIO SISR.</div>
+                        <div class="card-tags">
+                            <span class="card-tag">VMware Workstation</span>
+                            <span class="card-tag">Virtualisation</span>
+                            <span class="card-tag">Windows 10</span>
+                            <span class="card-tag">Hyperviseur</span>
+                            <span class="card-tag">Réseau NAT</span>
+                            <span class="card-tag">Snapshots</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-meta">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                                12 pages
+                            </span>
+                            <button class="card-open-btn">Voir le document →</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- E6 -->
+    <section id="e6" class="e5-section" style="background: rgba(255, 0, 255, 0.02);">
+        <div class="e5-section-inner">
+            <div class="e5-section-header">
+                <p class="e5-eyebrow">Épreuve</p>
+                <h2 class="e5-section-title" style="background: linear-gradient(135deg, var(--secondary), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">E6 — Cybersécurité</h2>
+                <p class="e5-section-desc">Cybersécurité des services informatiques — travaux pratiques et situations professionnelles documentées.</p>
+            </div>
+
+            <div class="subjects-grid">
+
+                <!-- ── TP VLAN ── -->
+                <div class="subject-card" onclick="openPdf('Sujet_e6.pdf', 'TP Réseau — Configuration VLAN avec Switch & Routeur Cisco')">
+                    <div class="card-badge" style="background: linear-gradient(135deg, var(--secondary), var(--primary));">TP&#160;1</div>
+                    <div class="card-preview" style="background: linear-gradient(160deg, #1a0d2e 0%, #080814 100%);">
+                        <div class="card-preview-inner">
+                            <div class="pdf-mini" style="background:#fff;">
+                                <div style="width:100%;height:100%;background:#fff;padding:7px;position:relative;">
+                                    <div style="height:2px;width:100%;background:#1a5fa8;border-radius:1px;margin-bottom:5px;"></div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:1px;">Configuration VLAN</div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:3px;">Switch &amp; Routeur Cisco</div>
+                                    <div style="font-size:4px;color:#1a5fa8;font-weight:700;letter-spacing:0.5px;margin-bottom:5px;">E6 — TP Réseau | BTS SIO SISR</div>
+                                    <div style="height:1px;background:#e0e0e0;margin-bottom:4px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:85%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:90%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="display:flex;gap:2px;margin-bottom:3px;">
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                    </div>
+                                    <div style="height:2px;width:95%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:75%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="position:absolute;bottom:6px;right:6px;width:16px;height:20px;background:#e74c3c;border-radius:2px;font-size:4px;color:white;font-weight:800;display:flex;align-items:center;justify-content:center;">PDF</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-fade"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-eyebrow" style="color:var(--secondary);">E6 · TP Réseau</div>
+                        <div class="card-title">Configuration VLAN<br><span style="color:var(--secondary);">Switch &amp; Routeur Cisco</span></div>
+                        <div class="card-desc">Mise en place d'une infrastructure réseau segmentée par VLANs sur matériel physique Cisco. Router-on-a-Stick, trunk 802.1Q et pare-feu pfSense.</div>
+                        <div class="card-tags">
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">VLAN</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Cisco IOS</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">802.1Q</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">pfSense</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Router-on-a-Stick</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-meta" style="color:rgba(255,0,255,0.4);">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                                16 pages
+                            </span>
+                            <button class="card-open-btn" style="background:linear-gradient(135deg,var(--secondary),var(--primary));">Voir le document →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── FICHE E6 ── -->
+                <div class="subject-card" onclick="openPdf('Fiche_E6_SISR_Zerouali_Rabia.pdf', 'Fiche E6')">
+                    <div class="card-badge" style="background: linear-gradient(135deg, var(--secondary), var(--primary));">TP&#160;2</div>
+                    <div class="card-preview" style="background: linear-gradient(160deg, #1a0d2e 0%, #080814 100%);">
+                        <div class="card-preview-inner">
+                            <div class="pdf-mini" style="background:#fff;">
+                                <div style="width:100%;height:100%;background:#fff;padding:7px;position:relative;">
+                                    <div style="height:2px;width:100%;background:#1a5fa8;border-radius:1px;margin-bottom:5px;"></div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:1px;">Fiche E6 — Réseau Cisco</div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:3px;">DHCP, Adressage IP &amp; Sécurisation</div>
+                                    <div style="font-size:4px;color:#1a5fa8;font-weight:700;letter-spacing:0.5px;margin-bottom:5px;">E6 — Fiche réalisation | BTS SIO SISR</div>
+                                    <div style="height:1px;background:#e0e0e0;margin-bottom:4px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:85%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:90%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="display:flex;gap:2px;margin-bottom:3px;">
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                    </div>
+                                    <div style="height:2px;width:95%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:75%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="position:absolute;bottom:6px;right:6px;width:16px;height:20px;background:#e74c3c;border-radius:2px;font-size:4px;color:white;font-weight:800;display:flex;align-items:center;justify-content:center;">PDF</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-fade"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-eyebrow" style="color:var(--secondary);">E6 · Fiche réalisation</div>
+                        <div class="card-title">Fiche E6<br><span style="color:var(--secondary);">Réseau Cisco — DHCP &amp; Sécurisation</span></div>
+                        <div class="card-desc">Configuration d'un réseau local avec Switch &amp; Routeur Cisco IOS — adressage IP, service DHCP (pool LAN, séquence DORA), sécurisation et validation par pings.</div>
+                        <div class="card-tags">
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Cisco IOS</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">DHCP</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Adressage IP</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">PuTTY</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">802.3</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-meta" style="color:rgba(255,0,255,0.4);">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                                2 pages
+                            </span>
+                            <button class="card-open-btn" style="background:linear-gradient(135deg,var(--secondary),var(--primary));">Voir le document →</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Veille -->
+    <section id="veille" class="e5-section" style="background: rgba(0, 255, 136, 0.02);">
+        <div class="e5-section-inner">
+            <div class="e5-section-header">
+                <p class="e5-eyebrow">Veille</p>
+                <h2 class="e5-section-title" style="background: linear-gradient(135deg, var(--accent), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Veille Technologique</h2>
+                <p class="e5-section-desc">Analyse et veille sur les évolutions du domaine de la cybersécurité et des infrastructures réseau.</p>
+            </div>
+
+            <div class="subjects-grid">
+
+                <!-- ── ZTNA ── -->
+                <div class="subject-card" onclick="openPdf('veille_ztna.pdf', 'Veille Technologique — Zero Trust Network Access (ZTNA)')">
+                    <div class="card-badge" style="background: linear-gradient(135deg, var(--accent), var(--primary));">ZTNA</div>
+
+                    <div class="card-preview">
+                        <div class="card-preview-inner">
+                            <div class="pdf-mini" style="background:#fff;">
+                                <div style="width:100%;height:100%;background:#fff;padding:7px;position:relative;">
+                                    <div style="height:2px;width:100%;background:#1a5fa8;border-radius:1px;margin-bottom:5px;"></div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:1px;">Veille Technologique</div>
+                                    <div style="font-size:5.5px;font-weight:900;color:#1a3a5c;line-height:1.2;margin-bottom:3px;">Zero Trust Network Access</div>
+                                    <div style="font-size:4px;color:#1a5fa8;font-weight:700;letter-spacing:0.5px;margin-bottom:5px;">ZTNA | BTS SIO SISR</div>
+                                    <div style="height:1px;background:#e0e0e0;margin-bottom:4px;"></div>
+                                    <div style="height:2px;width:100%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:85%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:90%;background:#f0f0f0;border-radius:1px;margin-bottom:4px;"></div>
+                                    <div style="display:flex;gap:2px;margin-bottom:3px;">
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                        <div style="flex:1;height:12px;background:#e8f0fb;border-radius:1px;"></div>
+                                    </div>
+                                    <div style="height:2px;width:95%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="height:2px;width:75%;background:#f0f0f0;border-radius:1px;margin-bottom:2px;"></div>
+                                    <div style="position:absolute;bottom:6px;right:6px;width:16px;height:20px;background:#e74c3c;border-radius:2px;font-size:4px;color:white;font-weight:800;display:flex;align-items:center;justify-content:center;">PDF</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-fade"></div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-eyebrow" style="color:var(--accent);">Veille · Cybersécurité</div>
+                        <div class="card-title">Zero Trust Network Access<br><span style="color:var(--accent);">(ZTNA)</span></div>
+                        <div class="card-desc">Analyse du modèle Zero Trust, comparaison VPN vs ZTNA, solutions du marché et enjeux de déploiement.</div>
+                        <div class="card-tags">
+                            <span class="card-tag" style="border-color:rgba(0,255,136,0.3);color:rgba(0,255,136,0.8);">Zero Trust</span>
+                            <span class="card-tag" style="border-color:rgba(0,255,136,0.3);color:rgba(0,255,136,0.8);">Cybersécurité</span>
+                            <span class="card-tag" style="border-color:rgba(0,255,136,0.3);color:rgba(0,255,136,0.8);">NIST</span>
+                            <span class="card-tag" style="border-color:rgba(0,255,136,0.3);color:rgba(0,255,136,0.8);">Cloudflare</span>
+                            <span class="card-tag" style="border-color:rgba(0,255,136,0.3);color:rgba(0,255,136,0.8);">Zscaler</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-meta">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+                                7 pages
+                            </span>
+                            <button class="card-open-btn" style="background:linear-gradient(135deg,var(--accent),var(--primary));">Voir le document →</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ═══ Articles hebdomadaires générés par IA ═══ -->
+            <div id="veille-articles-header" class="veille-articles-header" style="display:none;">
+                <p class="e5-eyebrow">Automatisé · IA</p>
+                <h3 class="veille-articles-title">Articles Hebdomadaires</h3>
+                <p class="veille-articles-desc">Nouveaux articles générés automatiquement chaque lundi sur la cybersécurité, le ZTNA et les évolutions des réseaux sécurisés.</p>
+            </div>
+            <div id="veille-articles-grid" class="subjects-grid"></div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════ CERTIFICATION ═══════════════ -->
+    <section id="certification" class="e5-section" style="background: rgba(255, 0, 255, 0.02);">
+        <div class="e5-section-inner">
+            <div class="e5-section-header">
+                <p class="e5-eyebrow">Diplômes</p>
+                <h2 class="e5-section-title" style="background: linear-gradient(135deg, var(--secondary), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Certifications</h2>
+                <p class="e5-section-desc">Certifications et attestations de compétences obtenues dans le cadre du BTS SIO.</p>
+            </div>
+
+            <div class="subjects-grid">
+
+                <!-- ── Notions de base en matière de réseaux ── -->
+                <div class="subject-card" style="cursor:default;">
+                    <div class="card-badge" style="background: linear-gradient(135deg, var(--secondary), var(--primary));">CISCO</div>
+
+                    <div class="card-preview" style="background: linear-gradient(160deg, #0d0814 0%, #080814 100%);">
+                        <div class="card-preview-inner">
+                            <div class="pdf-mini" style="background: #0a0a0f;">
+                                <div style="width:100%;height:100%;background:linear-gradient(135deg,#0d0814,#0a0a1a);padding:8px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+                                    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#ff00ff,#00f0ff);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:white;margin-bottom:2px;">🌐</div>
+                                    <div style="font-size:5px;font-weight:900;color:#ff00ff;letter-spacing:1px;text-align:center;">CISCO</div>
+                                    <div style="font-size:4.5px;font-weight:700;color:white;text-align:center;line-height:1.3;">Notions de base<br>en matière de réseaux</div>
+                                    <div style="height:1px;width:60%;background:rgba(255,0,255,0.3);margin:2px 0;"></div>
+                                    <div style="font-size:4px;color:rgba(0,240,255,0.6);text-align:center;">Networking Basics</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-fade"></div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-eyebrow" style="color:var(--secondary);">Certification · Cisco</div>
+                        <div class="card-title">Notions de base en<br><span style="color:var(--secondary);">matière de réseaux</span></div>
+                        <div class="card-desc">Certification Cisco couvrant les fondamentaux des réseaux informatiques : modèles OSI/TCP-IP, adressage IP, protocoles et équipements réseau.</div>
+                        <div class="card-tags">
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Cisco</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Réseaux</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">OSI / TCP-IP</span>
+                            <span class="card-tag" style="border-color:rgba(255,0,255,0.3);color:rgba(255,0,255,0.8);">Adressage IP</span>
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-meta" style="color: rgba(255,0,255,0.5);">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                Certification obtenue
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════ MODAL PDF ═══════════════ -->
+    <div class="pdf-modal" id="pdfModal">
+        <div class="pdf-modal-box">
+            <div class="pdf-modal-header">
+                <span class="pdf-modal-title" id="pdfModalTitle"></span>
+                <button class="pdf-modal-close" onclick="closePdf()">✕</button>
+            </div>
+            <iframe class="pdf-modal-frame" id="pdfFrame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            setTimeout(() => {
+                follower.style.left = e.clientX + 'px';
+                follower.style.top = e.clientY + 'px';
+            }, 100);
+        });
+
+        // PDF Modal
+        function openPdf(filename, title) {
+            document.getElementById('pdfModalTitle').textContent = title;
+            document.getElementById('pdfFrame').src = filename;
+            document.getElementById('pdfModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closePdf() {
+            document.getElementById('pdfModal').classList.remove('open');
+            document.getElementById('pdfFrame').src = '';
+            document.body.style.overflow = '';
+        }
+        document.getElementById('pdfModal').addEventListener('click', function(e) {
+            if (e.target === this) closePdf();
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closePdf(); });
+
+        // Canvas
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 1 - 0.5;
+                this.speedY = Math.random() * 1 - 0.5;
+                this.color = `rgba(0, 240, 255, ${Math.random() * 0.5})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            particles.forEach((p1, i) => {
+                particles.slice(i + 1).forEach(p2 => {
+                    const dx = p1.x - p2.x, dy = p1.y - p2.y;
+                    const distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < 150) {
+                        ctx.strokeStyle = `rgba(0, 240, 255, ${0.2 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Parallax
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.card-3d, .visual-box');
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            cards.forEach(card => {
+                card.style.transform = `translateX(${xAxis}px) translateY(${yAxis}px)`;
+            });
+        });
+
+        // ═══════════════════════════════════════════
+        //   ARTICLES DE VEILLE HEBDOMADAIRES
+        // ═══════════════════════════════════════════
+
+        async function loadVeilleArticles() {
+            try {
+                const res = await fetch('data/articles.json');
+                if (!res.ok) return;
+                const articles = await res.json();
+                if (!Array.isArray(articles) || articles.length === 0) return;
+
+                document.getElementById('veille-articles-header').style.display = 'block';
+                const grid = document.getElementById('veille-articles-grid');
+                articles.forEach((article, index) => {
+                    grid.appendChild(buildArticleCard(article, index));
+                });
+            } catch (e) {
+                console.log('Articles de veille non disponibles.');
+            }
+        }
+
+        function buildArticleCard(article, index) {
+            const d = new Date(article.date);
+            const wn = String(index + 1).padStart(2, '0');
+            const dayStr = String(d.getDate()).padStart(2, '0');
+            const monthStr = d.toLocaleDateString('fr-FR', { month: 'short' }).toUpperCase();
+            const dateStr = d.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            const tagsPreviewHtml = (article.tags || []).slice(0, 3).map(t =>
+                `<span style="padding:1px 5px;background:rgba(0,255,136,0.15);border:0.5px solid rgba(0,255,136,0.4);border-radius:3px;font-size:3.5px;color:rgba(0,255,136,0.9);font-weight:700;">${escapeHtml(t)}</span>`
+            ).join('');
+
+            const cardTagsHtml = (article.tags || []).map(t =>
+                `<span class="card-tag" style="border-color:rgba(0,255,136,0.3);color:rgba(0,255,136,0.8);">${escapeHtml(t)}</span>`
+            ).join('');
+
+            const contentHtml = (typeof marked !== 'undefined')
+                ? marked.parse(article.content || '')
+                : (article.content || '').replace(/\n/g, '<br>');
+
+            const sourcesHtml = (article.sources && article.sources.length > 0) ? `
+                <div style="margin-top:1rem;padding-top:0.8rem;border-top:1px solid rgba(0,255,136,0.15);">
+                    <div style="font-size:0.7rem;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:0.5rem;">Sources</div>
+                    <ul style="list-style:none;padding:0;margin:0;">
+                        ${article.sources.map(s => `<li style="margin-bottom:0.3rem;"><a href="${escapeHtml(s)}" target="_blank" rel="noopener noreferrer" style="font-size:0.72rem;color:var(--primary);text-decoration:underline;word-break:break-all;" onclick="event.stopPropagation()">${escapeHtml(s)}</a></li>`).join('')}
+                    </ul>
+                </div>` : '';
+
+            const div = document.createElement('div');
+            div.className = 'subject-card';
+
+            div.innerHTML = `
+                <div class="card-badge" style="background:linear-gradient(135deg,var(--accent),var(--primary));">S.${wn}</div>
+
+                <div class="card-preview" style="background:linear-gradient(160deg,#0a1a12,#080d14);">
+                    <div class="card-preview-inner">
+                        <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px;background:linear-gradient(135deg,#0a1a12,#080d14);position:relative;">
+                            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#00ff88,#00f0ff);display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:2px;flex-shrink:0;">
+                                <div style="font-size:11px;font-weight:900;color:#0a0a0f;line-height:1;">${dayStr}</div>
+                                <div style="font-size:5px;font-weight:700;color:#0a0a0f;line-height:1;">${monthStr}</div>
+                            </div>
+                            <div style="font-size:4.5px;color:rgba(0,240,255,0.8);font-weight:700;letter-spacing:1px;">${d.getFullYear()}</div>
+                            <div style="display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:3px;">${tagsPreviewHtml}</div>
+                            <div style="position:absolute;bottom:8px;left:8px;right:8px;">
+                                <div style="height:1.5px;width:100%;background:rgba(0,240,255,0.12);border-radius:1px;margin-bottom:2px;"></div>
+                                <div style="height:1.5px;width:70%;background:rgba(0,240,255,0.12);border-radius:1px;margin-bottom:2px;"></div>
+                                <div style="height:1.5px;width:85%;background:rgba(0,240,255,0.12);border-radius:1px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-fade"></div>
+                </div>
+
+                <div class="card-body">
+                    <div class="card-eyebrow" style="color:var(--accent);">Veille · Cybersécurité</div>
+                    <div class="card-title">${escapeHtml(article.title)}</div>
+                    <div class="card-desc">${escapeHtml(article.summary)}</div>
+                    <div class="card-tags">${cardTagsHtml}</div>
+
+                    <div class="article-expand" id="article-expand-${index}">
+                        <div class="article-prose">${contentHtml}</div>
+                        ${sourcesHtml}
+                    </div>
+
+                    <div class="card-footer">
+                        <span class="card-meta">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            ${dateStr}
+                        </span>
+                        <button class="card-open-btn" id="article-btn-${index}"
+                            style="background:linear-gradient(135deg,var(--accent),var(--primary));"
+                            onclick="event.stopPropagation();toggleArticle(${index})">
+                            Lire l'article →
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            div.addEventListener('click', () => toggleArticle(index));
+            return div;
+        }
+
+        function toggleArticle(index) {
+            const expand = document.getElementById(`article-expand-${index}`);
+            const btn = document.getElementById(`article-btn-${index}`);
+            const isOpen = expand.classList.contains('open');
+            expand.classList.toggle('open', !isOpen);
+            btn.textContent = isOpen ? 'Lire l\'article →' : '▲ Réduire';
+        }
+
+        function escapeHtml(str) {
+            if (typeof str !== 'string') return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        loadVeilleArticles();
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "article-test-001",
+    "title": "Zero Trust en 2025 : les nouvelles tendances du marché",
+    "summary": "Le modèle Zero Trust Network Access continue de s'imposer dans les entreprises. Zscaler et Cloudflare Access dominent, tandis que le NIST met à jour son framework. Tour d'horizon des évolutions récentes.",
+    "content": "## Introduction\n\nLe **Zero Trust Network Access (ZTNA)** est devenu incontournable dans les stratégies de cybersécurité des entreprises en 2025. Face à la multiplication du télétravail et des accès cloud, le modèle périmétrique traditionnel montre ses limites.\n\n## Les acteurs qui dominent\n\nDeux solutions se distinguent particulièrement :\n\n- **Zscaler Private Access** — leader du marché, approche cloud-native\n- **Cloudflare Access** — solution compétitive avec un excellent rapport qualité/prix\n- **Cisco Secure Access** — intégration poussée avec l'écosystème Cisco\n\n## Évolutions réglementaires\n\nLa directive **NIS2**, entrée en vigueur en octobre 2024, pousse les entreprises européennes à adopter des architectures Zero Trust. Les obligations de sécurité renforcées concernent désormais plus de 160 000 entités en France.\n\n## Comparaison VPN vs ZTNA\n\n| Critère | VPN classique | ZTNA |\n|---------|--------------|------|\n| Accès | Réseau complet | Application par application |\n| Vérification | À la connexion | Continue |\n| Visibilité | Limitée | Totale |\n\n## Perspectives\n\nL'adoption du ZTNA devrait croître de **25%** en 2025 selon Gartner. La combinaison ZTNA + IAM (Identity Access Management) devient le standard de facto pour les entreprises soucieuses de leur sécurité.",
+    "date": "2025-04-28T09:00:00.000Z",
+    "tags": ["Zero Trust", "ZTNA", "NIS2", "Cybersécurité", "Veille"],
+    "sources": [
+      "https://www.nist.gov/cyberframework",
+      "https://www.zscaler.com/resources/security-terms-glossary/what-is-zero-trust-network-access"
+    ]
+  },
+  {
+    "id": "article-test-002",
+    "title": "Vulnérabilités réseaux : les menaces de la semaine",
+    "summary": "Plusieurs vulnérabilités critiques ont été découvertes dans des équipements Cisco et Fortinet. Mise à jour recommandée en urgence pour les entreprises concernées.",
+    "content": "## Contexte\n\nCette semaine a été marquée par la publication de plusieurs **CVE critiques** touchant des équipements réseau très répandus en entreprise.\n\n## Vulnérabilités Cisco\n\nCisco a publié des correctifs pour **3 vulnérabilités critiques** dans IOS XE :\n\n- **CVE-2025-XXXX** — Élévation de privilèges sur les switchs Catalyst\n- Impact : accès administrateur sans authentification\n- Recommandation : mise à jour vers la version 17.x\n\n## Fortinet FortiGate\n\nUne faille d'authentification a été identifiée dans FortiOS. Les firewalls exposés directement sur Internet sont prioritairement ciblés.\n\n## Bonnes pratiques\n\n1. **Appliquer les patches** dès leur publication\n2. **Segmenter le réseau** avec des VLANs dédiés\n3. **Activer l'authentification multifacteur** sur tous les équipements\n4. **Monitorer les logs** avec un SIEM\n\n## Ressources\n\nLe **CERT-FR** publie régulièrement des alertes de sécurité à suivre pour rester à jour sur les menaces.",
+    "date": "2025-05-05T09:00:00.000Z",
+    "tags": ["CVE", "Cisco", "Fortinet", "Vulnérabilités", "CERT-FR"],
+    "sources": [
+      "https://www.cert.ssi.gouv.fr",
+      "https://sec.cloudapps.cisco.com/security/center/publicationListing.x"
+    ]
+  }
+]

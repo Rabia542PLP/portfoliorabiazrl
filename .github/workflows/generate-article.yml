@@ -1,0 +1,55 @@
+name: Génération article veille cybersécurité
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'   # Chaque lundi à 9h (Paris UTC+1)
+  workflow_dispatch:        # Déclenchement manuel possible
+
+jobs:
+  generate-article:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout du dépôt
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer Ollama
+        run: |
+          curl -fsSL https://ollama.ai/install.sh | sh
+          ollama serve &
+          echo "⏳ Attente du démarrage d'Ollama..."
+          sleep 8
+
+      - name: Télécharger le modèle
+        run: |
+          ollama pull llama3.2:3b
+          echo "✅ Modèle prêt"
+        env:
+          OLLAMA_MODEL: llama3.2:3b
+
+      - name: Installer les dépendances
+        run: |
+          npm init -y
+          npm install node-fetch@3
+
+      - name: Générer l'article
+        run: node scripts/generate-article.js
+        env:
+          OLLAMA_MODEL: llama3.2:3b
+
+      - name: Commit et push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/
+          git diff --staged --quiet || git commit -m "veille: article du $(date +'%d/%m/%Y')"
+          git push
